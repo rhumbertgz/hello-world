@@ -1,45 +1,60 @@
 import {
-    createDefaultModule, createDefaultSharedModule, DefaultSharedModuleContext, inject,
-    LangiumServices, LangiumSharedServices, Module, PartialLangiumServices
-} from 'langium';
-import { HelloWorldGeneratedModule, HelloWorldGeneratedSharedModule } from './generated/module';
-import { HelloWorldValidator, registerValidationChecks } from './hello-world-validator';
-import { CustomCompletionProvider } from './generated/hello-world-completion';
-
+  createDefaultModule,
+  createDefaultSharedModule,
+  DefaultSharedModuleContext,
+  inject,
+  LangiumServices,
+  LangiumSharedServices,
+  Module,
+  PartialLangiumServices,
+} from "langium";
+import {
+  HelloWorldGeneratedModule,
+  HelloWorldGeneratedSharedModule,
+} from "./generated/module";
+import {
+  HelloWorldValidator,
+  registerValidationChecks,
+} from "./hello-world-validator";
+import { CustomCompletionProvider } from "./hello-world-completion";
 /**
  * Declaration of custom services - add your own service classes here.
  */
 export type HelloWorldAddedServices = {
-    validation: {
-        HelloWorldValidator: HelloWorldValidator
-    },
-    lsp: {
-        completion: {
-            CompletionProvider: CustomCompletionProvider
-        }
-    }
-}
+  validation: {
+    HelloWorldValidator: HelloWorldValidator;
+  };
+  lsp: {
+    completion: {
+      CompletionProvider: CustomCompletionProvider;
+    };
+  };
+};
 
 /**
  * Union of Langium default services and your custom services - use this as constructor parameter
  * of custom service classes.
  */
-export type HelloWorldServices = LangiumServices & HelloWorldAddedServices
+export type HelloWorldServices = LangiumServices & HelloWorldAddedServices;
 
 /**
  * Dependency injection module that overrides Langium default services and contributes the
  * declared custom services. The Langium defaults can be partially specified to override only
  * selected services, while the custom services must be fully specified.
  */
-export const HelloWorldModule: Module<HelloWorldServices, PartialLangiumServices & HelloWorldAddedServices> = {
-    validation: {
-        HelloWorldValidator: () => new HelloWorldValidator()
+export const HelloWorldModule: Module<
+  HelloWorldServices,
+  PartialLangiumServices & HelloWorldAddedServices
+> = {
+  validation: {
+    HelloWorldValidator: () => new HelloWorldValidator(),
+  },
+  lsp: {
+    completion: {
+      CompletionProvider: (services: LangiumServices) =>
+        new CustomCompletionProvider(services),
     },
-    lsp: {
-        completion: {
-            CompletionProvider: (services) => new CustomCompletionProvider(services)
-        }
-    }
+  },
 };
 
 /**
@@ -58,19 +73,23 @@ export const HelloWorldModule: Module<HelloWorldServices, PartialLangiumServices
  * @returns An object wrapping the shared services and the language-specific services
  */
 export function createHelloWorldServices(context: DefaultSharedModuleContext): {
-    shared: LangiumSharedServices,
-    HelloWorld: HelloWorldServices
+  shared: LangiumSharedServices;
+  HelloWorld: HelloWorldServices;
 } {
-    const shared = inject(
-        createDefaultSharedModule(context),
-        HelloWorldGeneratedSharedModule
-    );
-    const HelloWorld = inject(
-        createDefaultModule({ shared }),
-        HelloWorldGeneratedModule,
-        HelloWorldModule
-    );
-    shared.ServiceRegistry.register(HelloWorld);
-    registerValidationChecks(HelloWorld);
-    return { shared, HelloWorld };
+  const shared = inject(
+    createDefaultSharedModule(context),
+    HelloWorldGeneratedSharedModule
+  );
+  const HelloWorld = inject(
+    createDefaultModule({ shared }),
+    HelloWorldGeneratedModule,
+    HelloWorldModule
+  );
+  shared.ServiceRegistry.register(HelloWorld);
+  registerValidationChecks(HelloWorld);
+
+  // Register custom completation provider
+  HelloWorld.lsp.CompletionProvider = new CustomCompletionProvider(HelloWorld);
+
+  return { shared, HelloWorld };
 }
