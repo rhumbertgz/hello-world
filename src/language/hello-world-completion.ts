@@ -13,7 +13,6 @@ type Suggestions = Promise<CompletionList | undefined>;
 export class CustomCompletionProvider extends DefaultCompletionProvider {
   override async getCompletion(doc: LangiumDocument, params: CompletionParams): Suggestions {
     const list = await super.getCompletion(doc, params);
-    console.log('getCompletion: ');
     if (list !== undefined) {
       const snippets: CompletionItem[]  = [
         {
@@ -33,10 +32,7 @@ export class CustomCompletionProvider extends DefaultCompletionProvider {
       ]; 
 
       list.items.push(...snippets);
-      console.log('list: ', list);
-    } else {
-      console.log('list undifined')
-    }
+    } 
 
     return list;
   }
