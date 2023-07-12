@@ -19,7 +19,7 @@
         "copy:monarch-syntax": "shx cp -fr ./out/syntaxes/ ./public/syntaxes",
         "build:web": "npm run build && npm run build:monarch && npm run prepare:public && npm run build:worker && npm run copy:monaco-editor-wrapper && npm run copy:monaco-workers && npm run copy:monarch-syntax",
         "build:monarch": "tsc -b tsconfig.monarch.json",
-        "serve": "npm run build && node ./out/web/app.js"
+        "serve": "npm run build:web && node ./out/web/app.js"
     },
     "dependencies": {
         "langium": "~1.2.0",
