@@ -92,3 +92,4 @@ export function createHelloWorldServices(context: DefaultSharedModuleContext): {
   HelloWorld.lsp.CompletionProvider = new CustomCompletionProvider(HelloWorld);
 
   return { shared, HelloWorld };
+}
