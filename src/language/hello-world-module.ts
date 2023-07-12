@@ -88,7 +88,7 @@ export function createHelloWorldServices(context: DefaultSharedModuleContext): {
   shared.ServiceRegistry.register(HelloWorld);
   registerValidationChecks(HelloWorld);
 
-  // Register custom completation provider
+  // Register Custom Completation Provider
   HelloWorld.lsp.CompletionProvider = new CustomCompletionProvider(HelloWorld);
 
   return { shared, HelloWorld };
