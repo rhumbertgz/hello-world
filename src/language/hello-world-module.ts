@@ -16,7 +16,8 @@ import {
   HelloWorldValidator,
   registerValidationChecks,
 } from "./hello-world-validator";
-import { CustomCompletionProvider } from "./hello-world-completion";
+import { HelloWorldCompletionProvider } from "./hello-world-completion";
+import { HelloWorldActionProvider } from "./hello-world-action-provider";
 /**
  * Declaration of custom services - add your own service classes here.
  */
@@ -26,7 +27,10 @@ export type HelloWorldAddedServices = {
   };
   lsp: {
     completion: {
-      CompletionProvider: CustomCompletionProvider;
+      CompletionProvider: HelloWorldCompletionProvider;
+    };
+    action: {
+      CodeActionProvider: HelloWorldActionProvider;
     };
   };
 };
@@ -52,7 +56,10 @@ export const HelloWorldModule: Module<
   lsp: {
     completion: {
       CompletionProvider: (services: LangiumServices) =>
-        new CustomCompletionProvider(services),
+        new HelloWorldCompletionProvider(services),
+    },
+    action: {
+      CodeActionProvider: () => new HelloWorldActionProvider(),
     },
   },
 };
@@ -89,7 +96,12 @@ export function createHelloWorldServices(context: DefaultSharedModuleContext): {
   registerValidationChecks(HelloWorld);
 
   // Register Custom Completation Provider
-  HelloWorld.lsp.CompletionProvider = new CustomCompletionProvider(HelloWorld);
+  HelloWorld.lsp.CompletionProvider = new HelloWorldCompletionProvider(
+    HelloWorld
+  );
+
+  // Register Custom Code Action Provider
+  HelloWorld.lsp.CodeActionProvider = new HelloWorldActionProvider();
 
   return { shared, HelloWorld };
 }
