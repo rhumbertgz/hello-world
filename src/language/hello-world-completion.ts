@@ -10,7 +10,7 @@ import {
 type Suggestions = Promise<CompletionList | undefined>;
 
 
-export class CustomCompletionProvider extends DefaultCompletionProvider {
+export class HelloWorldCompletionProvider extends DefaultCompletionProvider {
   override async getCompletion(doc: LangiumDocument, params: CompletionParams): Suggestions {
     const list = await super.getCompletion(doc, params);
     if (list !== undefined) {
